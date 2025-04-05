@@ -32,3 +32,5 @@ to subscription constraints.
 Data Pipeline, Azure Cloud Services, Data Factory, Data Lake Storage, Synapse
 Analytics, Content Analysis, Modern vs. Classic Content, Regional Content Trends,
 Machine Learning Integration
+
+Source Material: https://www.kaggle.com/datasets/shivamb/netflix-shows
