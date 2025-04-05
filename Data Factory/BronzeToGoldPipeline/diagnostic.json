@@ -1,0 +1,24 @@
+{
+    "now": "2025-01-04T02:57:47.687Z",
+    "perfNow": 14451.90000000596,
+    "diagnosticCorrelation": "84ab2042-2858-4c6c-b672-20ba7c291316",
+    "source": "DownloadSupportFiles",
+    "environment": {
+        "productName": "adf",
+        "buildVersion": "1.0.110124.1",
+        "environmentType": 3,
+        "resourceName": "datapipelinefactoryBilge",
+        "resourceRegion": "francecentral",
+        "resourceGroup": "DataPipelineProject",
+        "subscriptionId": "cd01043a-fd21-475a-bae2-d1f2368f2652",
+        "sessionId": "FfzPQjc6QUNmEtvEUHlztU",
+        "operationId": "",
+        "gitType": "live",
+        "loggingKey": "9d27f75f-4edd-465d-810d-1421e1f62876"
+    },
+    "additionalInfo": {
+        "selectedResource": "BronzeToGoldPipeline",
+        "selectedResourceType": "pipeline",
+        "dataFlowSessionId": "0d259b33-2e7f-49d7-8069-818725f587c2"
+    }
+}

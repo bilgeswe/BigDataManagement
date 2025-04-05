@@ -1,0 +1,24 @@
+{
+    "now": "2025-01-04T03:10:48.380Z",
+    "perfNow": 795163.099999994,
+    "diagnosticCorrelation": "f60b9ba3-4112-406d-ab07-60360c10add0",
+    "source": "DownloadSupportFiles",
+    "environment": {
+        "productName": "adf",
+        "buildVersion": "1.0.110124.1",
+        "environmentType": 3,
+        "resourceName": "datapipelinefactoryBilge",
+        "resourceRegion": "francecentral",
+        "resourceGroup": "DataPipelineProject",
+        "subscriptionId": "cd01043a-fd21-475a-bae2-d1f2368f2652",
+        "sessionId": "FfzPQjc6QUNmEtvEUHlztU",
+        "operationId": "",
+        "gitType": "live",
+        "loggingKey": "9d27f75f-4edd-465d-810d-1421e1f62876"
+    },
+    "additionalInfo": {
+        "selectedResource": "netflix_titles_bronze",
+        "selectedResourceType": "dataset",
+        "dataFlowSessionId": "0d259b33-2e7f-49d7-8069-818725f587c2"
+    }
+}

@@ -1,0 +1,7 @@
+selected resource name:		BronzeToGoldPipeline
+selected resource type:		pipeline
+factory name:			datapipelinefactoryBilge
+factory location:		francecentral
+subscription id:		cd01043a-fd21-475a-bae2-d1f2368f2652
+data flow session id:		0d259b33-2e7f-49d7-8069-818725f587c2
+time of download (UTC):		Sat, 04 Jan 2025 02:57:47 GMT

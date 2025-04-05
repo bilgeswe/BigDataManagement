@@ -1,0 +1,24 @@
+{
+    "now": "2025-01-04T03:10:58.595Z",
+    "perfNow": 805379,
+    "diagnosticCorrelation": "91509c79-b899-4325-83f1-6114e5b1f291",
+    "source": "DownloadSupportFiles",
+    "environment": {
+        "productName": "adf",
+        "buildVersion": "1.0.110124.1",
+        "environmentType": 3,
+        "resourceName": "datapipelinefactoryBilge",
+        "resourceRegion": "francecentral",
+        "resourceGroup": "DataPipelineProject",
+        "subscriptionId": "cd01043a-fd21-475a-bae2-d1f2368f2652",
+        "sessionId": "FfzPQjc6QUNmEtvEUHlztU",
+        "operationId": "",
+        "gitType": "live",
+        "loggingKey": "9d27f75f-4edd-465d-810d-1421e1f62876"
+    },
+    "additionalInfo": {
+        "selectedResource": "gold_parquet",
+        "selectedResourceType": "dataset",
+        "dataFlowSessionId": "0d259b33-2e7f-49d7-8069-818725f587c2"
+    }
+}

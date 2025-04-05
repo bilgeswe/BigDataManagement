@@ -1,0 +1,533 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "factoryName": {
+            "type": "string",
+            "metadata": "Data Factory name",
+            "defaultValue": "datapipelinefactoryBilge"
+        },
+        "AzureDataLakeStorage1_accountKey": {
+            "type": "secureString",
+            "metadata": "Secure string for 'accountKey' of 'AzureDataLakeStorage1'"
+        },
+        "AzureDataLakeStorage1_properties_typeProperties_url": {
+            "type": "string",
+            "defaultValue": "https://datapipelineaccount.dfs.core.windows.net/"
+        }
+    },
+    "variables": {
+        "factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+    },
+    "resources": [
+        {
+            "name": "[concat(parameters('factoryName'), '/AzureDataLakeStorage1')]",
+            "type": "Microsoft.DataFactory/factories/linkedServices",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "annotations": [],
+                "type": "AzureBlobFS",
+                "typeProperties": {
+                    "url": "[parameters('AzureDataLakeStorage1_properties_typeProperties_url')]",
+                    "accountKey": {
+                        "type": "SecureString",
+                        "value": "[parameters('AzureDataLakeStorage1_accountKey')]"
+                    }
+                }
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/integrationRuntime1')]",
+            "type": "Microsoft.DataFactory/factories/integrationRuntimes",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "type": "SelfHosted",
+                "typeProperties": {}
+            },
+            "dependsOn": []
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/netflix_titles_bronze')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "AzureDataLakeStorage1",
+                    "type": "LinkedServiceReference"
+                },
+                "annotations": [],
+                "type": "DelimitedText",
+                "typeProperties": {
+                    "location": {
+                        "type": "AzureBlobFSLocation",
+                        "fileName": "netflix_titles - netflix_titles.csv",
+                        "fileSystem": "bronze"
+                    },
+                    "columnDelimiter": ",",
+                    "escapeChar": "\\",
+                    "firstRowAsHeader": true,
+                    "quoteChar": "\""
+                },
+                "schema": [
+                    {
+                        "name": "show_id",
+                        "type": "String"
+                    },
+                    {
+                        "name": "type",
+                        "type": "String"
+                    },
+                    {
+                        "name": "title",
+                        "type": "String"
+                    },
+                    {
+                        "name": "director",
+                        "type": "String"
+                    },
+                    {
+                        "name": "cast",
+                        "type": "String"
+                    },
+                    {
+                        "name": "country",
+                        "type": "String"
+                    },
+                    {
+                        "name": "date_added",
+                        "type": "String"
+                    },
+                    {
+                        "name": "release_year",
+                        "type": "String"
+                    },
+                    {
+                        "name": "rating",
+                        "type": "String"
+                    },
+                    {
+                        "name": "duration",
+                        "type": "String"
+                    },
+                    {
+                        "name": "listed_in",
+                        "type": "String"
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage1')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/netflix_titles_enriched')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "AzureDataLakeStorage1",
+                    "type": "LinkedServiceReference"
+                },
+                "annotations": [],
+                "type": "DelimitedText",
+                "typeProperties": {
+                    "location": {
+                        "type": "AzureBlobFSLocation",
+                        "fileSystem": "silver"
+                    },
+                    "columnDelimiter": ",",
+                    "escapeChar": "\\",
+                    "firstRowAsHeader": true,
+                    "quoteChar": "\""
+                },
+                "schema": []
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage1')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/silver')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "AzureDataLakeStorage1",
+                    "type": "LinkedServiceReference"
+                },
+                "annotations": [],
+                "type": "DelimitedText",
+                "typeProperties": {
+                    "location": {
+                        "type": "AzureBlobFSLocation",
+                        "fileName": "netflix_titles_enriched.csv",
+                        "fileSystem": "silver"
+                    },
+                    "columnDelimiter": ",",
+                    "escapeChar": "\\",
+                    "firstRowAsHeader": true,
+                    "quoteChar": "\""
+                },
+                "schema": [
+                    {
+                        "name": "show_id",
+                        "type": "String"
+                    },
+                    {
+                        "name": "type",
+                        "type": "String"
+                    },
+                    {
+                        "name": "movie_title",
+                        "type": "String"
+                    },
+                    {
+                        "name": "country",
+                        "type": "String"
+                    },
+                    {
+                        "name": "release_year",
+                        "type": "String"
+                    },
+                    {
+                        "name": "duration",
+                        "type": "String"
+                    },
+                    {
+                        "name": "release_category",
+                        "type": "String"
+                    },
+                    {
+                        "name": "standardized_duration(mins)",
+                        "type": "String"
+                    },
+                    {
+                        "name": "is_last_10_years",
+                        "type": "String"
+                    },
+                    {
+                        "name": "primary_country",
+                        "type": "String"
+                    }
+                ]
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage1')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/gold_parquet')]",
+            "type": "Microsoft.DataFactory/factories/datasets",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "linkedServiceName": {
+                    "referenceName": "AzureDataLakeStorage1",
+                    "type": "LinkedServiceReference"
+                },
+                "annotations": [],
+                "type": "Parquet",
+                "typeProperties": {
+                    "location": {
+                        "type": "AzureBlobFSLocation",
+                        "fileSystem": "gold"
+                    },
+                    "compressionCodec": "snappy"
+                },
+                "schema": []
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage1')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/BronzeToSilverFlow')]",
+            "type": "Microsoft.DataFactory/factories/dataflows",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "type": "MappingDataFlow",
+                "typeProperties": {
+                    "sources": [
+                        {
+                            "dataset": {
+                                "referenceName": "netflix_titles_bronze",
+                                "type": "DatasetReference"
+                            },
+                            "name": "BronzeDataSet"
+                        }
+                    ],
+                    "sinks": [
+                        {
+                            "dataset": {
+                                "referenceName": "netflix_titles_enriched",
+                                "type": "DatasetReference"
+                            },
+                            "name": "WriteToSilver"
+                        }
+                    ],
+                    "transformations": [
+                        {
+                            "name": "CleanData"
+                        },
+                        {
+                            "name": "select1"
+                        },
+                        {
+                            "name": "derivedColumn1"
+                        },
+                        {
+                            "name": "aggregate1"
+                        }
+                    ],
+                    "scriptLines": [
+                        "source(output(",
+                        "          show_id as string,",
+                        "          type as string,",
+                        "          title as string,",
+                        "          director as string,",
+                        "          cast as string,",
+                        "          country as string,",
+                        "          date_added as string,",
+                        "          release_year as string,",
+                        "          rating as string,",
+                        "          duration as string,",
+                        "          listed_in as string",
+                        "     ),",
+                        "     allowSchemaDrift: true,",
+                        "     validateSchema: false,",
+                        "     ignoreNoFilesFound: false) ~> BronzeDataSet",
+                        "BronzeDataSet filter(!isNull(release_year) && !isNull(type) && !isNull(country) && !isNull(duration)) ~> CleanData",
+                        "CleanData select(mapColumn(",
+                        "          show_id,",
+                        "          type,",
+                        "          movie_title = title,",
+                        "          country,",
+                        "          release_year,",
+                        "          duration",
+                        "     ),",
+                        "     skipDuplicateMapInputs: true,",
+                        "     skipDuplicateMapOutputs: true) ~> select1",
+                        "select1 derive(release_category = iif(toInteger(release_year) >= 2000, 'Modern', 'Classic'),",
+                        "          {standardized_duration(mins)} = iif(type == 'Movie',",
+                        "    toInteger(substring(duration, 0, locate(' ', duration))),",
+                        "    toInteger(substring(duration, 0, locate(' ', duration))) * 480",
+                        "),",
+                        "          is_last_10_years = iif(toInteger(release_year) >= 2014, true(), false()),",
+                        "          primary_country = split(toString(country), ',')[1]) ~> derivedColumn1",
+                        "derivedColumn1 aggregate(groupBy(type,",
+                        "          release_category),",
+                        "     total_duration = sum(toInteger({standardized_duration(mins)}))) ~> aggregate1",
+                        "derivedColumn1 sink(allowSchemaDrift: true,",
+                        "     validateSchema: false,",
+                        "     partitionFileNames:['netflix_titles_enriched.csv'],",
+                        "     umask: 0022,",
+                        "     preCommands: [],",
+                        "     postCommands: [],",
+                        "     skipDuplicateMapInputs: true,",
+                        "     skipDuplicateMapOutputs: true,",
+                        "     partitionBy('hash', 1)) ~> WriteToSilver"
+                    ]
+                }
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/datasets/netflix_titles_bronze')]",
+                "[concat(variables('factoryId'), '/datasets/netflix_titles_enriched')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/SilverToGoldFlow')]",
+            "type": "Microsoft.DataFactory/factories/dataflows",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "type": "MappingDataFlow",
+                "typeProperties": {
+                    "sources": [
+                        {
+                            "dataset": {
+                                "referenceName": "silver",
+                                "type": "DatasetReference"
+                            },
+                            "name": "silver"
+                        }
+                    ],
+                    "sinks": [
+                        {
+                            "dataset": {
+                                "referenceName": "gold_parquet",
+                                "type": "DatasetReference"
+                            },
+                            "name": "sink1"
+                        }
+                    ],
+                    "transformations": [
+                        {
+                            "name": "filter1"
+                        },
+                        {
+                            "name": "aggregate1"
+                        },
+                        {
+                            "name": "filter2"
+                        },
+                        {
+                            "name": "derivedColumn1"
+                        },
+                        {
+                            "name": "aggregate2"
+                        },
+                        {
+                            "name": "select1"
+                        }
+                    ],
+                    "scriptLines": [
+                        "source(output(",
+                        "          show_id as string,",
+                        "          type as string,",
+                        "          movie_title as string,",
+                        "          country as string,",
+                        "          release_year as string,",
+                        "          duration as string,",
+                        "          release_category as string,",
+                        "          {standardized_duration(mins)} as string,",
+                        "          is_last_10_years as string,",
+                        "          primary_country as string",
+                        "     ),",
+                        "     allowSchemaDrift: true,",
+                        "     validateSchema: false,",
+                        "     ignoreNoFilesFound: false) ~> silver",
+                        "silver filter(toBoolean(is_last_10_years) == true()) ~> filter1",
+                        "filter2 aggregate(groupBy(primary_country),",
+                        "     total_count = count(primary_country),",
+                        "          total_duration = sum(toInteger(standardized_duration_mins)),",
+                        "          modern_count = countIf(release_category == 'Modern'),",
+                        "          classic_count = countIf(release_category == 'Classic'),",
+                        "          modern_duration = sumIf(release_category=='Modern', toInteger(standardized_duration_mins)),",
+                        "          classic_duration = coalesce(toInteger(sumIf(release_category == 'Classic', toInteger(standardized_duration_mins))), 0)) ~> aggregate1",
+                        "select1 filter(!isNull(standardized_duration_mins) && !isNull(primary_country)) ~> filter2",
+                        "aggregate1 derive(modern_percentagecount = toInteger((modern_count / total_count) * 100),",
+                        "          classic_percentagecount = toInteger(100 - ((modern_count / total_count) * 100)),",
+                        "          modern_percentageduration = toInteger((modern_duration / total_duration) * 100),",
+                        "          classic_percentageduration = toInteger(100 - ((modern_duration / total_duration) * 100)),",
+                        "          primary_country = replace(primary_country, ' ', '')) ~> derivedColumn1",
+                        "filter1 aggregate(groupBy(primary_country),",
+                        "     total_count = count(primary_country),",
+                        "          total_duration = sum(toInteger({standardized_duration(mins)}))) ~> aggregate2",
+                        "silver select(mapColumn(",
+                        "          show_id,",
+                        "          type,",
+                        "          movie_title,",
+                        "          country,",
+                        "          release_year,",
+                        "          duration,",
+                        "          release_category,",
+                        "          standardized_duration_mins = {standardized_duration(mins)},",
+                        "          is_last_10_years,",
+                        "          primary_country",
+                        "     ),",
+                        "     skipDuplicateMapInputs: true,",
+                        "     skipDuplicateMapOutputs: true) ~> select1",
+                        "derivedColumn1 sink(allowSchemaDrift: true,",
+                        "     validateSchema: false,",
+                        "     format: 'parquet',",
+                        "     partitionFileNames:['gold_parquet.parquet'],",
+                        "     umask: 0022,",
+                        "     preCommands: [],",
+                        "     postCommands: [],",
+                        "     skipDuplicateMapInputs: true,",
+                        "     skipDuplicateMapOutputs: true,",
+                        "     partitionBy('hash', 1)) ~> sink1"
+                    ]
+                }
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/datasets/silver')]",
+                "[concat(variables('factoryId'), '/datasets/gold_parquet')]"
+            ]
+        },
+        {
+            "name": "[concat(parameters('factoryName'), '/BronzeToGoldPipeline')]",
+            "type": "Microsoft.DataFactory/factories/pipelines",
+            "apiVersion": "2018-06-01",
+            "properties": {
+                "activities": [
+                    {
+                        "name": "BronzeToSilverFlow",
+                        "type": "ExecuteDataFlow",
+                        "dependsOn": [],
+                        "policy": {
+                            "timeout": "0.12:00:00",
+                            "retry": 0,
+                            "retryIntervalInSeconds": 30,
+                            "secureOutput": false,
+                            "secureInput": false
+                        },
+                        "userProperties": [],
+                        "typeProperties": {
+                            "dataflow": {
+                                "referenceName": "BronzeToSilverFlow",
+                                "type": "DataFlowReference",
+                                "parameters": {},
+                                "datasetParameters": {
+                                    "BronzeDataSet": {},
+                                    "WriteToSilver": {}
+                                }
+                            },
+                            "staging": {},
+                            "compute": {
+                                "coreCount": 8,
+                                "computeType": "General"
+                            },
+                            "traceLevel": "Fine"
+                        }
+                    },
+                    {
+                        "name": "SilverToGoldFlow",
+                        "type": "ExecuteDataFlow",
+                        "dependsOn": [
+                            {
+                                "activity": "BronzeToSilverFlow",
+                                "dependencyConditions": [
+                                    "Succeeded"
+                                ]
+                            }
+                        ],
+                        "policy": {
+                            "timeout": "0.12:00:00",
+                            "retry": 0,
+                            "retryIntervalInSeconds": 30,
+                            "secureOutput": false,
+                            "secureInput": false
+                        },
+                        "userProperties": [],
+                        "typeProperties": {
+                            "dataflow": {
+                                "referenceName": "SilverToGoldFlow",
+                                "type": "DataFlowReference",
+                                "parameters": {},
+                                "datasetParameters": {
+                                    "silver": {},
+                                    "sink1": {}
+                                }
+                            },
+                            "staging": {},
+                            "compute": {
+                                "coreCount": 8,
+                                "computeType": "General"
+                            },
+                            "traceLevel": "Fine"
+                        }
+                    }
+                ],
+                "policy": {
+                    "elapsedTimeMetric": {}
+                },
+                "annotations": [],
+                "lastPublishTime": "2025-01-03T20:18:29Z"
+            },
+            "dependsOn": [
+                "[concat(variables('factoryId'), '/dataflows/BronzeToSilverFlow')]",
+                "[concat(variables('factoryId'), '/dataflows/SilverToGoldFlow')]"
+            ]
+        }
+    ]
+}
